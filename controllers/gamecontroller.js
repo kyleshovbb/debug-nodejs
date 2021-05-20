@@ -34,45 +34,42 @@ router.post('/create', (req, res) => {
         user_rating: req.body.user_rating,
         have_played: req.body.have_played
     })
-        .then(
-            function createSuccess(game) {
-                res.status(200).json({ game })
-            },
-            function createFail(err) {
-                res.status(500).send(err.message)
-            }
-        )
+        .then((game) => {
+            res.status(200).json({ game })
+        })
+        .catch(() => {
+            res.status(500).send(err.message)
+        })
 })
 
 router.put('/update/:id', (req, res) => {
-    Game.update({
-        title: req.body.game.title,
-        studio: req.body.game.studio,
-        esrb_rating: req.body.game.esrb_rating,
-        user_rating: req.body.game.user_rating,
-        have_played: req.body.game.have_played
-    },
-        {
-            where: {
-                id: req.params.id,
-                owner_id: req.user.id
-            }
-        })
-        .then(
-            function updateSuccess(game) {
+    Game.findOne({ where: { id: req.params.id, owner_id: req.user.id }})
+        .then((game) => {
+            game.update({
+                title: req.body.title,
+                studio: req.body.studio,
+                esrb_rating: req.body.esrb_rating,
+                user_rating: req.body.user_rating,
+                have_played: req.body.have_played
+            }).then(() => {
                 res.status(200).json({
                     game,
-                    message: "Successfully updated."
+                    message: "Successfully updated"
                 })
-            },
-
-            function updateFail(err) {
+            })
+            .catch((err) => {
                 res.status(500).json({
                     message: err.message
                 })
-            }
+            })
 
-        )
+
+        })
+        .catch((err) => {
+            res.status(400).json({
+                message: err.message
+            })
+        })
 })
 
 router.delete('/remove/:id', (req, res) => {
