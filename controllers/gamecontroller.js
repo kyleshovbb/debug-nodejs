@@ -73,26 +73,31 @@ router.put('/update/:id', (req, res) => {
 })
 
 router.delete('/remove/:id', (req, res) => {
-    Game.destroy({
-        where: {
-            id: req.params.id,
-            owner_id: req.user.id
-        }
-    })
-    .then(
-        function deleteSuccess(game) {
-            res.status(200).json({
-                game,
-                message: "Successfully deleted"
-            })
-        },
-
-        function deleteFail(err) {
-            res.status(500).json({
+    Game.findOne({ where: { id: req.params.id, owner_id: req.user.id }})
+        .then((game) => {
+            if (game) {
+                game.destroy()
+                    .then(() => {
+                        res.status(200).json({
+                            game,
+                            message: "Successfully deleted"
+                        })
+                    })
+                    .cat500ch((err) => {
+                        res.status(500).json({
+                            error: err.message
+                        })
+                    })
+   
+            } else {
+                res.status(400).send({ error: "Game not found" })
+            }
+        })
+        .catch((err) => {
+            res.status(400).json({
                 error: err.message
             })
-        }
-    )
+        })
 })
 
 module.exports = router;

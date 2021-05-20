@@ -5,7 +5,7 @@ const config = require('./common/config');
 const sequelize = new Sequelize(config.DATABASE_NAME, config.DATABASE_USERNAME, config.DATABASE_PASSWORD, {
     host: 'localhost',
     dialect: 'postgres',
-    logging:false,
+    logging: false,
     operatorsAliases: Sequelize.Op,
     port: config.DATABASE_PORT,
 })
