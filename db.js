@@ -1,10 +1,12 @@
 const Sequelize = require('sequelize');
-                                //database username   password
-const sequelize = new Sequelize('gamedb', 'postgres', 'ghastb0i', {
+
+const config = require('./common/config');
+
+const sequelize = new Sequelize(config.DATABASE_NAME, config.DATABASE_USERNAME, config.DATABASE_PASSWORD, {
     host: 'localhost',
     dialect: 'postgres',
     operatorsAliases: Sequelize.Op,
-    port: 5433,
+    port: config.DATABASE_PORT,
 })
 
 sequelize.authenticate().then(
