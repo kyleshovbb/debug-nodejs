@@ -35,25 +35,26 @@ router.post('/signup', (req, res) => {
 })
 
 router.post('/signin', (req, res) => {
-    User.findOne({ where: { username: req.body.user.username } }).then(user => {
-        if (user) {
-            bcrypt.compare(req.body.user.password, user.passwordHash, function (err, matches) {
-                if (matches) {
-                    const token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
-                    res.json({
-                        user: user.toResponse(),
-                        message: "Successfully authenticated.",
-                        sessionToken: token
-                    });
-                } else {
-                    res.status(502).send({ error: "Passwords do not match." })
-                }
-            });
-        } else {
-            res.status(403).send({ error: "User not found." })
-        }
+    User.findOne({ where: { username: req.body.username } })
+        .then(user => {
+            if (user) {
+                bcrypt.compare(req.body.password, user.passwordHash, function (err, matches) {
+                    if (matches) {
+                        const token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
+                        res.json({
+                            user: user.toResponse(),
+                            message: "Successfully authenticated.",
+                            sessionToken: token
+                        });
+                    } else {
+                        res.status(400).send({ error: "Passwords do not match." })
+                    }
+                });
+            } else {
+                res.status(400).send({ error: "User not found." })
+            }
 
-    })
+        })
 })
 
 module.exports = router;
