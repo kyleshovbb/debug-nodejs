@@ -1,5 +1,5 @@
 module.exports = function(sequelize, DataTypes) {
-    return sequelize.define('user', {
+    const User =  sequelize.define('user', {
         full_name: {
             type: DataTypes.STRING,
             allowNull: false
@@ -23,4 +23,12 @@ module.exports = function(sequelize, DataTypes) {
             }
         }
     })
+
+    User.prototype.toResponse = function() {
+        const user = Object.assign({}, this.dataValues);
+        delete user.passwordHash;
+        return user
+    }
+
+    return User
 }

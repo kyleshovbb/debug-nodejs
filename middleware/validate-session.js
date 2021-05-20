@@ -13,7 +13,6 @@ module.exports = function (req, res, next) {
                 if (decoded) {
                     User.findOne({ where: { id: decoded.id } }).then(user => {
                         req.user = user;
-                        console.log(`user: ${user}`)
                         next()
                     },
                         function () {

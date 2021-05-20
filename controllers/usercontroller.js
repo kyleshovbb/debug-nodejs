@@ -5,25 +5,33 @@ const jwt = require('jsonwebtoken');
 const User = require('../db').import('../models/user');
 
 router.post('/signup', (req, res) => {
-    User.create({
-        full_name: req.body.user.full_name,
-        username: req.body.user.username,
-        passwordhash: bcrypt.hashSync(req.body.user.password, 10),
-        email: req.body.user.email,
-    })
-        .then(
-            function signupSuccess(user) {
-                let token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
-                res.status(200).json({
-                    user: user,
-                    token: token
-                })
-            },
+    const { full_name, username, password, email } = req.body
 
-            function signupFail(err) {
-                res.status(500).send(err.message)
-            }
-        )
+    // Validate request
+    if (!full_name || !username || !password || !email) {
+        res.status(400).send({ error: "Bad Request" })
+    } else {
+        User.create({
+            full_name,
+            username,
+            passwordHash: bcrypt.hashSync(password, 10),
+            email,
+        })
+            .then(
+                function signupSuccess(user) {
+                    let token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
+                    res.status(200).json({
+                        user: user.toResponse(),
+                        token
+                    })
+                }
+            )
+            .catch(
+                function signupFail(err) {
+                    res.status(500).send(err.message)
+                }
+            )
+    }
 })
 
 router.post('/signin', (req, res) => {
@@ -33,7 +41,7 @@ router.post('/signin', (req, res) => {
                 if (matches) {
                     const token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
                     res.json({
-                        user: user,
+                        user: user.toResponse(),
                         message: "Successfully authenticated.",
                         sessionToken: token
                     });
