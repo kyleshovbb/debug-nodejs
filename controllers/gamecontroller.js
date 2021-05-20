@@ -5,10 +5,7 @@ router.get('/all', (req, res) => {
     Game.findAll({ where: { owner_id: req.user.id } })
         .then(
             function findSuccess(data) {
-                res.status(200).json({
-                    games: games,
-                    message: "Data fetched."
-                })
+                res.status(200).json({ games })
             },
 
             function findFail() {
@@ -38,21 +35,17 @@ router.get('/:id', (req, res) => {
 
 router.post('/create', (req, res) => {
     Game.create({
-        title: req.body.game.title,
-        owner_id: req.body.user.id,
-        studio: req.body.game.studio,
-        esrb_rating: req.body.game.esrb_rating,
-        user_rating: req.body.game.user_rating,
-        have_played: req.body.game.have_played
+        owner_id: req.user.id,
+        title: req.body.title,
+        studio: req.body.studio,
+        esrb_rating: req.body.esrb_rating,
+        user_rating: req.body.user_rating,
+        have_played: req.body.have_played
     })
         .then(
             function createSuccess(game) {
-                res.status(200).json({
-                    game: game,
-                    message: "Game created."
-                })
+                res.status(200).json({ game })
             },
-
             function createFail(err) {
                 res.status(500).send(err.message)
             }
