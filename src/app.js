@@ -1,5 +1,4 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 
 const { sequelize } = require("./db");
 const userRouter = require("./routes/user.router");
@@ -11,14 +10,10 @@ const app = express();
 
 sequelize.sync();
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.use("/api/auth", userRouter);
-
-app.use(auth);
-
-app.use("/api/game", gameRouter);
+app.use("/api/game", auth, gameRouter);
 
 app.listen(config.PORT, () => {
   console.log("App is listening on 4000");
