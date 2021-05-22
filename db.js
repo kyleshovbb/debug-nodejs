@@ -7,11 +7,11 @@ const sequelize = new Sequelize(
   config.DATABASE_USERNAME,
   config.DATABASE_PASSWORD,
   {
-    host: "localhost",
-    dialect: "postgres",
+    port: config.DATABASE_PORT,
+    host: config.DATABASE_HOST,
+    dialect: config.DATABASE_DIALECT,
     logging: false,
     operatorsAliases: Sequelize.Op,
-    port: config.DATABASE_PORT,
   }
 );
 
@@ -24,4 +24,12 @@ sequelize
     console.log(`Error: ${err}`);
   });
 
-module.exports = sequelize;
+const db = {
+  Sequelize,
+  sequelize,
+};
+
+db.Game = sequelize.import("./models/game");
+db.User = sequelize.import("./models/user");
+
+module.exports = db;

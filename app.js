@@ -1,14 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
-const db = require("./db");
+const { sequelize } = require("./db");
 const user = require("./controllers/usercontroller");
 const game = require("./controllers/gamecontroller");
 const config = require("./common/config");
 
 const app = express();
 
-db.sync();
+sequelize.sync();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

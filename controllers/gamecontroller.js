@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const Game = require("../db").import("../models/game");
+const { Game } = require("../db");
 
 router.get("/all", (req, res) => {
   Game.findAll({ where: { owner_id: req.user.id } })
@@ -16,10 +16,16 @@ router.get("/all", (req, res) => {
 router.get("/:id", (req, res) => {
   Game.findOne({ where: { id: req.params.id, owner_id: req.user.id } })
     .then((game) => {
-      res.status(200).json({ game });
+      if (game) {
+        res.status(200).json({ game });
+      } else {
+        res.status(400).json({
+          message: "Game not found",
+        });
+      }
     })
     .catch(() => {
-      res.status(500).json({
+      res.status(400).json({
         message: "Game not found",
       });
     });
@@ -38,32 +44,38 @@ router.post("/create", (req, res) => {
       res.status(200).json({ game });
     })
     .catch((err) => {
-      res.status(400).send(err.message);
+      res.status(400).send({ message: err.message });
     });
 });
 
 router.put("/update/:id", (req, res) => {
   Game.findOne({ where: { id: req.params.id, owner_id: req.user.id } })
     .then((game) => {
-      game
-        .update({
-          title: req.body.title,
-          studio: req.body.studio,
-          esrb_rating: req.body.esrb_rating,
-          user_rating: req.body.user_rating,
-          have_played: req.body.have_played,
-        })
-        .then(() => {
-          res.status(200).json({
-            game,
-            message: "Successfully updated",
+      if (game) {
+        game
+          .update({
+            title: req.body.title,
+            studio: req.body.studio,
+            esrb_rating: req.body.esrb_rating,
+            user_rating: req.body.user_rating,
+            have_played: req.body.have_played,
+          })
+          .then(() => {
+            res.status(200).json({
+              game,
+              message: "Successfully updated",
+            });
+          })
+          .catch((err) => {
+            res.status(500).json({
+              message: err.message,
+            });
           });
-        })
-        .catch((err) => {
-          res.status(500).json({
-            message: err.message,
-          });
+      } else {
+        res.status(400).json({
+          message: "Game not found",
         });
+      }
     })
     .catch((err) => {
       res.status(400).json({
@@ -84,18 +96,18 @@ router.delete("/remove/:id", (req, res) => {
               message: "Successfully deleted",
             });
           })
-          .cat500ch((err) => {
+          .catch((err) => {
             res.status(500).json({
-              error: err.message,
+              message: err.message,
             });
           });
       } else {
-        res.status(400).send({ error: "Game not found" });
+        res.status(400).send({ message: "Game not found" });
       }
     })
     .catch((err) => {
       res.status(400).json({
-        error: err.message,
+        message: err.message,
       });
     });
 });
