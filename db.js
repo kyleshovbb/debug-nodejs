@@ -1,23 +1,27 @@
-const Sequelize = require('sequelize');
+const Sequelize = require("sequelize");
 
-const config = require('./common/config');
+const config = require("./common/config");
 
-const sequelize = new Sequelize(config.DATABASE_NAME, config.DATABASE_USERNAME, config.DATABASE_PASSWORD, {
-    host: 'localhost',
-    dialect: 'postgres',
+const sequelize = new Sequelize(
+  config.DATABASE_NAME,
+  config.DATABASE_USERNAME,
+  config.DATABASE_PASSWORD,
+  {
+    host: "localhost",
+    dialect: "postgres",
     logging: false,
     operatorsAliases: Sequelize.Op,
     port: config.DATABASE_PORT,
-})
+  }
+);
 
-sequelize.authenticate().then(
-    function success() {
-        console.log("Connected to DB");
-    },
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("Connected to DB");
+  })
+  .catch((err) => {
+    console.log(`Error: ${err}`);
+  });
 
-    function fail(err) {
-        console.log(`Error: ${err}`);
-    }
-)
-
-module.exports = sequelize
+module.exports = sequelize;
