@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const { User } = require("../db");
+const { SESSION_TOKEN_KEY } = require("../common/constants");
 
 exports.signup = (req, res) => {
   const { full_name, username, password, email } = req.body;
@@ -17,7 +18,7 @@ exports.signup = (req, res) => {
       email,
     })
       .then((user) => {
-        const token = jwt.sign({ id: user.id }, "lets_play_sum_games_man", {
+        const token = jwt.sign({ id: user.id }, SESSION_TOKEN_KEY, {
           expiresIn: 60 * 60 * 24,
         });
         res.status(200).json({
@@ -36,7 +37,7 @@ exports.signin = (req, res) => {
     if (user) {
       bcrypt.compare(req.body.password, user.passwordHash, (err, matches) => {
         if (matches) {
-          const token = jwt.sign({ id: user.id }, "lets_play_sum_games_man", {
+          const token = jwt.sign({ id: user.id }, SESSION_TOKEN_KEY, {
             expiresIn: 60 * 60 * 24,
           });
           res.json({

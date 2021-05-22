@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const { User } = require("../db");
+const { SESSION_TOKEN_KEY } = require("../common/constants");
 
 module.exports = (req, res, next) => {
   const sessionToken = req.headers.authorization;
@@ -9,7 +10,7 @@ module.exports = (req, res, next) => {
     res.status(403).send({ auth: false, message: "No token provided." });
   }
 
-  jwt.verify(sessionToken, "lets_play_sum_games_man", (err, decoded) => {
+  jwt.verify(sessionToken, SESSION_TOKEN_KEY, (err, decoded) => {
     if (decoded) {
       User.findOne({ where: { id: decoded.id } }).then(
         (user) => {
