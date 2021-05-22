@@ -4,8 +4,8 @@
   "main": "app.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon app.js",
-    "lint": "eslint --ext .js,.ts --fix ."
+    "start": "nodemon src/app.js",
+    "lint": "eslint --ext .js,.ts --fix src"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

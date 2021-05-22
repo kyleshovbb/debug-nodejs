@@ -1,10 +1,9 @@
-const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const { User } = require("../db");
 
-router.post("/signup", (req, res) => {
+exports.signup = (req, res) => {
   const { full_name, username, password, email } = req.body;
 
   // Validate request
@@ -30,9 +29,9 @@ router.post("/signup", (req, res) => {
         res.status(500).send(err.message);
       });
   }
-});
+};
 
-router.post("/signin", (req, res) => {
+exports.signin = (req, res) => {
   User.findOne({ where: { username: req.body.username } }).then((user) => {
     if (user) {
       bcrypt.compare(req.body.password, user.passwordHash, (err, matches) => {
@@ -53,6 +52,4 @@ router.post("/signin", (req, res) => {
       res.status(400).send({ error: "User not found." });
     }
   });
-});
-
-module.exports = router;
+};

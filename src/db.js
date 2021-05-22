@@ -29,7 +29,7 @@ const db = {
   sequelize,
 };
 
-db.Game = sequelize.import("./models/game");
-db.User = sequelize.import("./models/user");
+db.Game = sequelize.import("./models/game.model");
+db.User = sequelize.import("./models/user.model");
 
 module.exports = db;

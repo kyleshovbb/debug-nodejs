@@ -1,7 +1,6 @@
-const router = require("express").Router();
 const { Game } = require("../db");
 
-router.get("/all", (req, res) => {
+exports.findAll = (req, res) => {
   Game.findAll({ where: { owner_id: req.user.id } })
     .then((games) => {
       res.status(200).json({ games });
@@ -11,9 +10,9 @@ router.get("/all", (req, res) => {
         message: "Games is not defined",
       });
     });
-});
+};
 
-router.get("/:id", (req, res) => {
+exports.findOne = (req, res) => {
   Game.findOne({ where: { id: req.params.id, owner_id: req.user.id } })
     .then((game) => {
       if (game) {
@@ -29,9 +28,9 @@ router.get("/:id", (req, res) => {
         message: "Game not found",
       });
     });
-});
+};
 
-router.post("/create", (req, res) => {
+exports.create = (req, res) => {
   Game.create({
     owner_id: req.user.id,
     title: req.body.title,
@@ -46,9 +45,9 @@ router.post("/create", (req, res) => {
     .catch((err) => {
       res.status(400).send({ message: err.message });
     });
-});
+};
 
-router.put("/update/:id", (req, res) => {
+exports.update = (req, res) => {
   Game.findOne({ where: { id: req.params.id, owner_id: req.user.id } })
     .then((game) => {
       if (game) {
@@ -82,9 +81,9 @@ router.put("/update/:id", (req, res) => {
         message: err.message,
       });
     });
-});
+};
 
-router.delete("/remove/:id", (req, res) => {
+exports.remove = (req, res) => {
   Game.findOne({ where: { id: req.params.id, owner_id: req.user.id } })
     .then((game) => {
       if (game) {
@@ -110,6 +109,4 @@ router.delete("/remove/:id", (req, res) => {
         message: err.message,
       });
     });
-});
-
-module.exports = router;
+};

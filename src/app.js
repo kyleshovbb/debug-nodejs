@@ -2,9 +2,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const { sequelize } = require("./db");
-const user = require("./controllers/usercontroller");
-const game = require("./controllers/gamecontroller");
+const userRouter = require("./routes/user.router");
+const gameRouter = require("./routes/game.router");
 const config = require("./common/config");
+const auth = require("./middleware/validate-session");
 
 const app = express();
 
@@ -13,11 +14,11 @@ sequelize.sync();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use("/api/auth", user);
+app.use("/api/auth", userRouter);
 
-app.use(require("./middleware/validate-session"));
+app.use(auth);
 
-app.use("/api/game", game);
+app.use("/api/game", gameRouter);
 
 app.listen(config.PORT, () => {
   console.log("App is listening on 4000");
